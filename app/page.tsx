@@ -1,6 +1,7 @@
 "use client";
-import Input from "@/app/components/Input";
+
 import { useState } from "react";
+import Form from "@/app/components/Form";
 
 
 export default function Homepage() {
@@ -19,26 +20,9 @@ export default function Homepage() {
           Fuel Mate is a web app that helps you split fuel costs with your friends.
         </p>
 
-        <div className="bg-neutral-900 shadow-md rounded-lg p-5 pb-8 w-full max-w-100">
-          <h3 className="text-neutral-200 font-bold mb-1.5 text-l">Split the cost into how many people?</h3>
-          
-          <Input onChange={handleInputChange} placeholder="number of people"/>
-
-          <h3 className="text-neutral-200 font-bold mb-1.5 text-l">Distance</h3>
-
-          <Input onChange={handleInputChange} placeholder="distance"/>
-
-          <h3 className="text-neutral-200 font-bold mb-1.5 text-l">Fuel costs (per liter)</h3>
-
-          <Input onChange={handleInputChange} placeholder="fuel costs"/>
-
-          <h3 className="text-neutral-200 font-bold mb-1.5 text-l">Fuel consumption</h3>
-
-          <Input onChange={handleInputChange} placeholder="fuel consumption" className="mb-7"/>
-          
-
-          <button className="w-full bg-blue-400 rounded p-3 text-m font-bold text-neutral-200 hover:cursor-pointer hover:bg-indigo-400 transistion ease duration-300">Calculate</button>
-        </div>
+        <Form onSubmitData={(data) => {
+              console.log("Dane z formularza:", data);
+        } }/>
         
 
     </div>
