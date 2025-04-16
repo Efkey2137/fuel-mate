@@ -35,7 +35,7 @@ const handleCalculate = (data: any) => {
         <p className="text-lg text-neutral-700 mb-8 hidden md:block">
           Fuel Mate is a web app that helps you split fuel costs with your friends.
         </p>
-        <div className="shadow-md rounded-lg p-5 pb-8 w-full min-h-130 grid grid-cols-3 gap-3 justify-items-center-safe items-start">
+        <div className="shadow-md rounded-lg p-5 pb-8 w-full min-h-130 grid xl:grid-cols-3 gap-3 justify-items-center-safe items-start">
 
           <History/>  
           <Form onSubmitData={handleCalculate}/>
