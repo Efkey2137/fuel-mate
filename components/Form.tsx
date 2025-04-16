@@ -2,30 +2,41 @@ import { useState } from "react";
 import Input from "@/components/Input";
 import Label from "@/components/Label";
 
-type FormProps = {
-  onSubmitData: (data: {
-    numberOfPeople: number;
-    distance: number;
-    fuelPrice: number;
-    consumption: number;
-    income: boolean;
-  }) => void;
+type FormData = {
+  tripName: string;
+  numberOfPeople: number;
+  distance: number;
+  fuelPrice: number;
+  consumption: number;
+  income: boolean;
 };
 
-export default function Form({ onSubmitData }: FormProps) {
-  const [numberOfPeople, setNumberOfPeople] = useState(0);
-  const [distance, setDistance] = useState(0);
-  const [fuelPrice, setFuelPrice] = useState(0);
-  const [consumption, setConsumption] = useState(0);
-  const [income, setIncome] = useState(false);
+type FormProps = {
+  onSubmitData: (data: FormData) => void;
+  defaultValues?: Partial<FormData>;
+};
+
+
+export default function Form({ onSubmitData, defaultValues }: FormProps) {
+  const [tripName, setTripName] = useState(defaultValues?.tripName || "");
+  const [numberOfPeople, setNumberOfPeople] = useState(defaultValues?.numberOfPeople || 1);
+  const [distance, setDistance] = useState(defaultValues?.distance || 0);
+  const [fuelPrice, setFuelPrice] = useState(defaultValues?.fuelPrice || 0);
+  const [consumption, setConsumption] = useState(defaultValues?.consumption || 0);
+  const [income, setIncome] = useState(defaultValues?.income || false);
+  
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmitData({ numberOfPeople, distance, fuelPrice, consumption, income });
+    onSubmitData({ tripName, numberOfPeople, distance, fuelPrice, consumption, income });
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-neutral-900 shadow-md rounded-lg p-5 pb-8 w-full max-w-105 h-full">
+      <Label text="Enter your trip name" />
+      <Input type="string" onChange={(value: string | boolean) => typeof value === 'string' && setTripName(value)} placeholder="trip name" />
+
+
       <Label text="Split the cost into how many people?" />
       <Input onChange={(value: string | boolean) => typeof value === 'string' && setNumberOfPeople(+value)} placeholder="number of people" />
 
