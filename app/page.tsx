@@ -39,7 +39,7 @@ const handleCalculate = (data: any) => {
 
           <History/>  
           <Form onSubmitData={handleCalculate}/>
-          {results && <Results results={results} />}
+          <Results results={results} />
 
         </div>
     </div>
