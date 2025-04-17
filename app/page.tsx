@@ -21,6 +21,15 @@ export default function Homepage() {
     costPerPerson: string;
     dislikeCost: string;
   };
+  type DefaultValuesType = {
+    tripName: string;
+    numberOfPeople: number;
+    distance: number;
+    fuelPrice: number;
+    consumption: number;
+    income: boolean;
+  };
+  
   
 
   const saveToHistory = (newItem: any) => {
@@ -33,7 +42,10 @@ export default function Homepage() {
   const [results, setResults] = useState<ResultType | null>(null);
   const [historyList, setHistoryList] = useState<ResultType[]>([]);
   const [historyData, setHistoryData] = useLocalStorage<ResultType[]>("history", []);
-  const [editData, setEditData] = useState<ResultType | null>(null);
+  const [editData, setEditData] = useState<DefaultValuesType | undefined>(undefined);
+  const [editId, setEditId] = useState<number | null>(null);
+
+
 
 
   useEffect(() => {
@@ -45,28 +57,51 @@ export default function Homepage() {
   const handleCalculate = (data: Omit<ResultType, "id" | "tripName" | "totalCost" | "costPerPerson" | "dislikeCost">) => {
     const calculated = Calculations(data);
   
-    const fullEntry: ResultType = {
-      id: Date.now(),
-      tripName: `Trip ${historyData.length + 1}`,
-      ...data,
-      ...calculated,
-    };
+    if (editId !== null) {
+      // EDYTUJEMY ISTNIEJĄCY
+      const updatedHistory = historyData.map((item) => 
+        item.id === editId
+          ? { ...item, ...data, ...calculated } // nadpisujemy dane
+          : item
+      );
+      setHistoryData(updatedHistory);
+      setEditId(null); // czyścimy po edycji
+      setEditData(undefined);
+      setResults(null);
+    } else {
+      // NORMALNE DODAWANIE
+      const fullEntry: ResultType = {
+        id: Date.now(),
+        tripName: `Trip ${historyData.length + 1}`,
+        ...data,
+        ...calculated,
+      };
   
-    setResults(fullEntry);
-    saveToHistory(fullEntry);
-    setHistoryData(prev => [...prev, fullEntry]);
+      setResults(fullEntry);
+      saveToHistory(fullEntry);
+      setHistoryData(prev => [...prev, fullEntry]);
+    }
   };
+  
   
   const handleDelete = (id: number) => {
     const filtered = historyData.filter((item) => item.id !== id);
-    setHistoryData(filtered); // localStorage zaktualizuje się automatycznie
-  };
-
-  const handleEdit = (item: ResultType) => {
-    setEditData(item); // przekażesz to do <Form />
-    setResults(null); // opcjonalnie, czyścisz wynik
+    setHistoryData(filtered);
+    localStorage.setItem("fuelMateHistory", JSON.stringify(filtered)); // <<< DODAJ TO
   };
   
+
+  const handleEdit = (item: ResultType) => {
+    setEditData({
+      tripName: item.tripName,
+      distance: item.distance,
+      fuelPrice: item.fuelPrice,
+      consumption: item.consumption,
+      numberOfPeople: item.numberOfPeople,
+      income: item.income,
+    });
+    setEditId(item.id); // ZAPAMIĘTUJEMY KTÓRY ELEMENT EDYTUJEMY
+  };
   
   
 
@@ -85,13 +120,7 @@ export default function Homepage() {
         <div className="shadow-md rounded-lg p-5 pb-8 w-full min-h-130 grid xl:grid-cols-3 gap-3 justify-items-center-safe items-start">
 
           
-          <Form defaultValues={editData ? {
-            distance: editData.distance,
-            fuelPrice: editData.fuelPrice,
-            consumption: editData.consumption,
-            numberOfPeople: editData.numberOfPeople,
-            income: editData.income
-          } : undefined} onSubmitData={handleCalculate} />
+          <Form defaultValues={editData} onSubmitData={handleCalculate} />
           <Results results={results} />
           <History history={historyData} onDelete={handleDelete} onEdit={handleEdit} />
 
